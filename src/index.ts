@@ -11,6 +11,8 @@ export type TestRuleInput = {
     linterOptions?: Partial<LinterOptions>;
 };
 
+export type TestRuleFunction = (options: TestRuleInput) => void;
+
 export type TestCase = {
     code: string;
     description?: string;
@@ -33,7 +35,7 @@ export type WarningMessage = {
 };
 
 export function getTestRule(globalTestRuleInput: Partial<TestRuleInput>) {
-    return function testRule(testRuleInput: TestRuleInput) {
+    const returnFunction: TestRuleFunction = (testRuleInput: TestRuleInput) => {
         describe(testRuleInput.ruleName, () => {
             const ruleLinterOptions: Partial<LinterOptions> = {
                 ...globalTestRuleInput.linterOptions,
@@ -165,6 +167,7 @@ export function getTestRule(globalTestRuleInput: Partial<TestRuleInput>) {
             );
         });
     };
+    return returnFunction;
 }
 
 function setupTestCases(

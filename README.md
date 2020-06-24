@@ -1,3 +1,16 @@
+# Stylelint Rule Tester
+
+_This is not an official [stylelint](https://stylelint.io) package._
+
+Simple function written in TypeScript to test custom stylelint plugin rules.
+
+Largely influenced by [jest-preset-stylelint/getTestRule.js](https://github.com/stylelint/jest-preset-stylelint/blob/769cac42e11f811aac6f59ee6570205910ea98fa/getTestRule.js).
+
+## Usage
+
+This is just copied straight out of [this project's test file.](https://github.com/electrovir/stylelint-jest-rule-tester/blob/master/src/test/rules/visibility/visibility.test.ts).
+
+```typescript
 import {getTestRule} from '../../..';
 import {visibilityRule} from './visibility.rule';
 
@@ -23,3 +36,4 @@ testRule({
         },
     ],
 });
+```

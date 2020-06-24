@@ -1,5 +1,5 @@
 {
-    "name": "stylelint-rule-tester",
+    "name": "stylelint-jest-rule-tester",
     "version": "1.0.0",
     "description": "Simple stylelint.io rule tester that uses Jest.",
     "main": "dist/test-rule.js",
@@ -9,7 +9,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/electrovir/stylelint-rule-tester.git"
+        "url": "git+https://github.com/electrovir/stylelint-jest-rule-tester.git"
     },
     "keywords": [
         "stylelint",
@@ -17,14 +17,18 @@
         "rule",
         "test",
         "style",
-        "lint"
+        "lint",
+        "css",
+        "less",
+        "scss",
+        "sass"
     ],
     "author": "electrovir (github.com/electrovir)",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/electrovir/stylelint-rule-tester/issues"
+        "url": "https://github.com/electrovir/stylelint-jest-rule-tester/issues"
     },
-    "homepage": "https://github.com/electrovir/stylelint-rule-tester#readme",
+    "homepage": "https://github.com/electrovir/stylelint-jest-rule-tester#readme",
     "peerDependencies": {
         "stylelint": "^13.0.0",
         "jest": "^26.0.1"
