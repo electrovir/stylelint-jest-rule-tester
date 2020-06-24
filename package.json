@@ -1,8 +1,8 @@
 {
     "name": "stylelint-jest-rule-tester",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Simple stylelint.io rule tester that uses Jest.",
-    "main": "dist/test-rule.js",
+    "main": "dist/index.js",
     "scripts": {
         "prepublishOnly": "npm install && npm run test",
         "test": "rm -rf dist; tsc && jest"

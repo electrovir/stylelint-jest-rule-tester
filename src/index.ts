@@ -34,7 +34,7 @@ export type WarningMessage = {
     column: number;
 };
 
-export function getTestRule(globalTestRuleInput: Partial<TestRuleInput>) {
+export function getTestRuleFunction(globalTestRuleInput: Partial<TestRuleInput>) {
     const returnFunction: TestRuleFunction = (testRuleInput: TestRuleInput) => {
         describe(testRuleInput.ruleName, () => {
             const ruleLinterOptions: Partial<LinterOptions> = {

@@ -1,7 +1,7 @@
-import {getTestRule} from '../../..';
+import {getTestRuleFunction} from '../../..';
 import {visibilityRule} from './visibility.rule';
 
-const testRule = getTestRule({
+const testRule = getTestRuleFunction({
     // a plugin must be supplied so that stylelint can find the rule you want to test
     linterOptions: {config: {plugins: ['./dist/test/test-plugins.js']}},
 });

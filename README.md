@@ -8,10 +8,10 @@ Largely influenced by [jest-preset-stylelint/getTestRule.js](https://github.com/
 
 ## Usage
 
-This is just copied straight out of [this project's test file.](https://github.com/electrovir/stylelint-jest-rule-tester/blob/master/src/test/rules/visibility/visibility.test.ts).
+This is from [this project's test file](https://github.com/electrovir/stylelint-jest-rule-tester/blob/master/src/test/rules/visibility/visibility.test.ts).
 
 ```typescript
-import {getTestRule} from '../../..';
+import {getTestRule} from 'stylelint-jest-rule-tester';
 import {visibilityRule} from './visibility.rule';
 
 const testRule = getTestRule({
