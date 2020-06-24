@@ -1,0 +1,42 @@
+{
+    "name": "stylelint-rule-tester",
+    "version": "1.0.0",
+    "description": "Simple stylelint.io rule tester that uses Jest.",
+    "main": "dist/test-rule.js",
+    "scripts": {
+        "prepublishOnly": "npm install && npm run test",
+        "test": "rm -rf dist; tsc && jest"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/electrovir/stylelint-rule-tester.git"
+    },
+    "keywords": [
+        "stylelint",
+        "jest",
+        "rule",
+        "test",
+        "style",
+        "lint"
+    ],
+    "author": "electrovir (github.com/electrovir)",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/electrovir/stylelint-rule-tester/issues"
+    },
+    "homepage": "https://github.com/electrovir/stylelint-rule-tester#readme",
+    "peerDependencies": {
+        "stylelint": "^13.0.0",
+        "jest": "^26.0.1"
+    },
+    "devDependencies": {
+        "@types/jest": "^26.0.0",
+        "@types/node": "^14.0.14",
+        "@types/stylelint": "^9.10.1",
+        "jest": "^26.1.0",
+        "prettier": "~2.0.5",
+        "stylelint": "^13.6.1",
+        "typescript": "^3.9.5"
+    },
+    "dependencies": {}
+}
