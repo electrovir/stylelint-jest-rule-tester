@@ -1,6 +1,6 @@
 {
     "name": "stylelint-jest-rule-tester",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Simple stylelint.io rule tester that uses Jest.",
     "main": "dist/index.js",
     "scripts": {

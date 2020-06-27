@@ -1,12 +1,41 @@
 import {inspect} from 'util';
 import {lint, LinterOptions, LintResult} from 'stylelint';
 
+/*
+This file is largely based on
+https://github.com/stylelint/jest-preset-stylelint/blob/769cac42e11f811aac6f59ee6570205910ea98fa/getTestRule.js
+which has the following license:
+
+The MIT License (MIT)
+
+Copyright (c) 2018 - present stylelint
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 export type TestRuleInput = {
     ruleName: string;
     ruleOptions: any[];
     accept: TestCase[];
     reject: RejectTestCase[];
     fix?: boolean;
+    description?: string;
 
     linterOptions?: Partial<LinterOptions>;
 };
@@ -79,6 +108,7 @@ export function getTestRuleFunction(globalTestRuleInput: Partial<TestRuleInput>)
                         expect(fixedCode).toBe(testCase.code);
                     }
                 },
+                testRuleInput.description,
             );
 
             setupTestCases(
@@ -164,6 +194,7 @@ export function getTestRuleFunction(globalTestRuleInput: Partial<TestRuleInput>)
                     }
                     expect((lintFixedCodeResult as any).parseErrors).toHaveLength(0);
                 },
+                testRuleInput.description,
             );
         });
     };
@@ -175,12 +206,14 @@ function setupTestCases(
     cases: RejectTestCase[],
     ruleOptions: any[],
     testCallback: (testCase: RejectTestCase) => jest.ProvidesCallback,
+    backupDescription?: string,
 ): void;
 function setupTestCases(
     testType: 'accept',
     cases: TestCase[],
     ruleOptions: any[],
     testCallback: (testCase: TestCase) => jest.ProvidesCallback,
+    backupDescription?: string,
 ): void;
 function setupTestCases(
     testType: 'accept' | 'reject',
@@ -189,6 +222,7 @@ function setupTestCases(
     testCallback:
         | ((testCase: TestCase) => jest.ProvidesCallback)
         | ((testCase: RejectTestCase) => jest.ProvidesCallback),
+    backupDescription?: string,
 ): void {
     if (cases.length) {
         describe(testType, () => {
@@ -202,7 +236,7 @@ function setupTestCases(
                 describe(inspect(ruleOptions), () => {
                     describe(testCase.code, () => {
                         itTest(
-                            testCase.description || 'no description',
+                            testCase.description || backupDescription || 'no description',
                             testCallback(testCase as RejectTestCase),
                         );
                     });
@@ -218,32 +252,3 @@ function getOutputCss(result: LintResult): string {
 
     return css;
 }
-
-/*
-
-This file is largely based on https://github.com/stylelint/jest-preset-stylelint/blob/769cac42e11f811aac6f59ee6570205910ea98fa/getTestRule.js
-which has the following license:
-
-The MIT License (MIT)
-
-Copyright (c) 2018 - present stylelint
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-*/
