@@ -29,9 +29,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-export type TestRuleInput = {
+export type TestRuleInput<RuleOptionsType> = {
     ruleName: string;
-    ruleOptions: any[];
+    ruleOptions: RuleOptionsType[];
     accept: TestCase[];
     reject: RejectTestCase[];
     fix?: boolean;
@@ -39,8 +39,6 @@ export type TestRuleInput = {
 
     linterOptions?: Partial<LinterOptions>;
 };
-
-export type TestRuleFunction = (options: TestRuleInput) => void;
 
 export type TestCase = {
     code: string;
@@ -63,142 +61,137 @@ export type WarningMessage = {
     column: number;
 };
 
-export function getTestRuleFunction(globalTestRuleInput: Partial<TestRuleInput>) {
-    const returnFunction: TestRuleFunction = (testRuleInput: TestRuleInput) => {
-        describe(testRuleInput.ruleName, () => {
-            const ruleLinterOptions: Partial<LinterOptions> = {
-                ...globalTestRuleInput.linterOptions,
-                ...testRuleInput.linterOptions,
-                config: {
-                    ...globalTestRuleInput.linterOptions?.config,
-                    ...testRuleInput.linterOptions?.config,
-                    rules: {
-                        [testRuleInput.ruleName]: testRuleInput.ruleOptions,
-                    },
+export function testRule<RuleOptionsType>(testRuleInput: TestRuleInput<RuleOptionsType>) {
+    describe(testRuleInput.ruleName, () => {
+        const ruleLinterOptions: Partial<LinterOptions> = {
+            ...testRuleInput.linterOptions,
+            config: {
+                ...testRuleInput.linterOptions?.config,
+                rules: {
+                    [testRuleInput.ruleName]: testRuleInput.ruleOptions,
                 },
-            };
+            },
+        };
 
-            setupTestCases(
-                'accept',
-                testRuleInput.accept,
-                testRuleInput.ruleOptions,
-                testCase => async () => {
-                    const testCaseLinterOptions: Partial<LinterOptions> = {
-                        ...ruleLinterOptions,
-                        code: testCase.code,
-                    };
+        setupTestCases(
+            'accept',
+            testRuleInput.accept,
+            testRuleInput.ruleOptions,
+            testCase => async () => {
+                const testCaseLinterOptions: Partial<LinterOptions> = {
+                    ...ruleLinterOptions,
+                    code: testCase.code,
+                };
 
+                const {
+                    results: [result],
+                } = await lint(testCaseLinterOptions);
+
+                expect(result.warnings).toHaveLength(0);
+                if ((result as any).parseErrors.length) {
+                    console.error('parse errors', (result as any).parseErrors);
+                }
+                expect((result as any).parseErrors).toHaveLength(0);
+
+                // fix shouldn't change code in an "accept" test
+                if (testRuleInput.fix) {
                     const {
-                        results: [result],
-                    } = await lint(testCaseLinterOptions);
-
-                    expect(result.warnings).toHaveLength(0);
-                    if ((result as any).parseErrors.length) {
-                        console.error('parse errors', (result as any).parseErrors);
-                    }
-                    expect((result as any).parseErrors).toHaveLength(0);
-
-                    // fix shouldn't change code in an "accept" test
-                    if (testRuleInput.fix) {
-                        const {
-                            results: [fixedResult],
-                        } = await lint({...testCaseLinterOptions, fix: true});
-                        const fixedCode = getOutputCss(fixedResult);
-
-                        expect(fixedCode).toBe(testCase.code);
-                    }
-                },
-                testRuleInput.description,
-            );
-
-            setupTestCases(
-                'reject',
-                testRuleInput.reject,
-                testRuleInput.ruleOptions,
-                testCase => async () => {
-                    const testCaseLinterOptions: Partial<LinterOptions> = {
-                        ...ruleLinterOptions,
-                        code: testCase.code,
-                    };
-
-                    const {
-                        results: [result],
-                    } = await lint(testCaseLinterOptions);
-
-                    const actualWarnings = result.warnings;
-
-                    if ((result as any).parseErrors.length) {
-                        console.log('parse errors', (result as any).parseErrors);
-                    }
-                    expect((result as any).parseErrors).toHaveLength(0);
-                    expect(actualWarnings).toHaveLength(
-                        testCase.warnings ? testCase.warnings.length : 1,
-                    );
-
-                    ((testCase.warnings || [testCase]) as Partial<WarningMessage>[]).forEach(
-                        (expectedMessage, index) => {
-                            const actualWarning = actualWarnings[index];
-                            expect(expectedMessage.message).toBeTruthy();
-                            expect(actualWarning.text).toBe(expectedMessage.message);
-
-                            if (expectedMessage.line != undefined) {
-                                expect(actualWarning.line).toBe(expectedMessage.line);
-                            }
-
-                            if (expectedMessage.column != undefined) {
-                                expect(actualWarning.column).toBe(expectedMessage.column);
-                            }
-                        },
-                    );
-
-                    if (!testRuleInput.fix) {
-                        return;
-                    }
-
-                    // Check that --fix doesn't change code
-                    if (testRuleInput.fix && testCase.fixed == undefined && !testCase.unfixable) {
-                        throw new Error(
-                            `If "fix" is set to true, all reject cases must have fixed: '<fixed-code>' property.`,
-                        );
-                    }
-
-                    const {
-                        results: [fixResult],
+                        results: [fixedResult],
                     } = await lint({...testCaseLinterOptions, fix: true});
+                    const fixedCode = getOutputCss(fixedResult);
 
-                    const fixedCode = getOutputCss(fixResult);
+                    expect(fixedCode).toBe(testCase.code);
+                }
+            },
+            testRuleInput.description,
+        );
 
-                    if (testCase.unfixable) {
-                        // can't fix
-                        if (testCase.fixed != undefined) {
-                            expect(fixedCode).toBe(testCase.fixed);
+        setupTestCases(
+            'reject',
+            testRuleInput.reject,
+            testRuleInput.ruleOptions,
+            testCase => async () => {
+                const testCaseLinterOptions: Partial<LinterOptions> = {
+                    ...ruleLinterOptions,
+                    code: testCase.code,
+                };
+
+                const {
+                    results: [result],
+                } = await lint(testCaseLinterOptions);
+
+                const actualWarnings = result.warnings;
+
+                if ((result as any).parseErrors.length) {
+                    console.log('parse errors', (result as any).parseErrors);
+                }
+                expect((result as any).parseErrors).toHaveLength(0);
+                expect(actualWarnings).toHaveLength(
+                    testCase.warnings ? testCase.warnings.length : 1,
+                );
+
+                ((testCase.warnings || [testCase]) as Partial<WarningMessage>[]).forEach(
+                    (expectedMessage, index) => {
+                        const actualWarning = actualWarnings[index];
+                        expect(expectedMessage.message).toBeTruthy();
+                        expect(actualWarning.text).toBe(expectedMessage.message);
+
+                        if (expectedMessage.line != undefined) {
+                            expect(actualWarning.line).toBe(expectedMessage.line);
                         }
 
-                        expect(fixedCode).toBe(testCase.code);
-                    } else {
+                        if (expectedMessage.column != undefined) {
+                            expect(actualWarning.column).toBe(expectedMessage.column);
+                        }
+                    },
+                );
+
+                if (!testRuleInput.fix) {
+                    return;
+                }
+
+                // Check that --fix doesn't change code
+                if (testRuleInput.fix && testCase.fixed == undefined && !testCase.unfixable) {
+                    throw new Error(
+                        `If "fix" is set to true, all reject cases must have fixed: '<fixed-code>' property.`,
+                    );
+                }
+
+                const {
+                    results: [fixResult],
+                } = await lint({...testCaseLinterOptions, fix: true});
+
+                const fixedCode = getOutputCss(fixResult);
+
+                if (testCase.unfixable) {
+                    // can't fix
+                    if (testCase.fixed != undefined) {
                         expect(fixedCode).toBe(testCase.fixed);
-                        expect(fixedCode).not.toBe(testCase.code);
                     }
 
-                    // Checks whether only errors other than those fixed are reported
-                    const {
-                        results: [lintFixedCodeResult],
-                    } = await lint({
-                        ...testCaseLinterOptions,
-                        code: fixedCode,
-                    });
+                    expect(fixedCode).toBe(testCase.code);
+                } else {
+                    expect(fixedCode).toBe(testCase.fixed);
+                    expect(fixedCode).not.toBe(testCase.code);
+                }
 
-                    expect(lintFixedCodeResult.warnings).toEqual(fixResult.warnings);
-                    if ((lintFixedCodeResult as any).parseErrors.length) {
-                        console.log('parse errors', (lintFixedCodeResult as any).parseErrors);
-                    }
-                    expect((lintFixedCodeResult as any).parseErrors).toHaveLength(0);
-                },
-                testRuleInput.description,
-            );
-        });
-    };
-    return returnFunction;
+                // Checks whether only errors other than those fixed are reported
+                const {
+                    results: [lintFixedCodeResult],
+                } = await lint({
+                    ...testCaseLinterOptions,
+                    code: fixedCode,
+                });
+
+                expect(lintFixedCodeResult.warnings).toEqual(fixResult.warnings);
+                if ((lintFixedCodeResult as any).parseErrors.length) {
+                    console.log('parse errors', (lintFixedCodeResult as any).parseErrors);
+                }
+                expect((lintFixedCodeResult as any).parseErrors).toHaveLength(0);
+            },
+            testRuleInput.description,
+        );
+    });
 }
 
 function setupTestCases(
