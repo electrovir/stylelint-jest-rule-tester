@@ -11,17 +11,15 @@ Largely influenced by [jest-preset-stylelint/getTestRule.js](https://github.com/
 This is from [this project's test file](https://github.com/electrovir/stylelint-jest-rule-tester/blob/master/src/test/rules/visibility/visibility.test.ts).
 
 ```typescript
-import {getTestRule} from 'stylelint-jest-rule-tester';
+import {testRule} from '../../..';
 import {visibilityRule} from './visibility.rule';
-
-const testRule = getTestRule({
-    // a plugin must be supplied so that stylelint can find the rule you want to test
-    linterOptions: {config: {plugins: ['./dist/test/test-plugins.js']}},
-});
 
 testRule({
     ruleName: visibilityRule.ruleName,
+    description: 'should work primary option in array',
     ruleOptions: [true],
+    // a plugin must be supplied so that stylelint can find the rule you want to test
+    linterOptions: {config: {plugins: ['./dist/test/plugins.js']}},
     fix: true,
     accept: [
         {
@@ -32,7 +30,7 @@ testRule({
         {
             code: 'a { color: pink; visibility: hidden; }',
             fixed: 'a { color: pink; }',
-            message: 'Try not to use visibility (skeleton/visibility)',
+            message: visibilityRule.message,
         },
     ],
 });

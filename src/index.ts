@@ -29,9 +29,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-export type TestRuleInput<RuleOptionsType> = {
+export type TestRuleInput<RuleOptions> = {
     ruleName: string;
-    ruleOptions: RuleOptionsType[];
+    ruleOptions: RuleOptions;
     accept: TestCase[];
     reject: RejectTestCase[];
     fix?: boolean;
@@ -194,24 +194,24 @@ export function testRule<RuleOptionsType>(testRuleInput: TestRuleInput<RuleOptio
     });
 }
 
-function setupTestCases(
+function setupTestCases<RuleOptions>(
     testType: 'reject',
     cases: RejectTestCase[],
-    ruleOptions: any[],
+    ruleOptions: RuleOptions,
     testCallback: (testCase: RejectTestCase) => jest.ProvidesCallback,
     backupDescription?: string,
 ): void;
-function setupTestCases(
+function setupTestCases<RuleOptions>(
     testType: 'accept',
     cases: TestCase[],
-    ruleOptions: any[],
+    ruleOptions: RuleOptions,
     testCallback: (testCase: TestCase) => jest.ProvidesCallback,
     backupDescription?: string,
 ): void;
-function setupTestCases(
+function setupTestCases<RuleOptions>(
     testType: 'accept' | 'reject',
     cases: TestCase[] | RejectTestCase[],
-    ruleOptions: any[],
+    ruleOptions: RuleOptions,
     testCallback:
         | ((testCase: TestCase) => jest.ProvidesCallback)
         | ((testCase: RejectTestCase) => jest.ProvidesCallback),

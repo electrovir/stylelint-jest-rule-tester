@@ -3,8 +3,10 @@ import {visibilityRule} from './visibility.rule';
 
 testRule({
     ruleName: visibilityRule.ruleName,
+    description: 'should work primary option in array',
     ruleOptions: [true],
-    linterOptions: {config: {plugins: ['./dist/test/test-plugins.js']}},
+    // a plugin must be supplied so that stylelint can find the rule you want to test
+    linterOptions: {config: {plugins: ['./dist/test/plugins.js']}},
     fix: true,
     accept: [
         {
@@ -15,7 +17,85 @@ testRule({
         {
             code: 'a { color: pink; visibility: hidden; }',
             fixed: 'a { color: pink; }',
-            message: 'Try not to use visibility (skeleton/visibility)',
+            message: visibilityRule.message,
+        },
+    ],
+});
+
+testRule({
+    ruleName: visibilityRule.ruleName,
+    description: 'should work without fix option',
+    ruleOptions: [true],
+    linterOptions: {config: {plugins: ['./dist/test/plugins.js']}},
+    accept: [
+        {
+            code: 'a { color: pink; }',
+        },
+    ],
+    reject: [
+        {
+            code: 'a { color: pink; visibility: hidden; }',
+            message: visibilityRule.message,
+        },
+    ],
+});
+
+testRule({
+    ruleName: visibilityRule.ruleName,
+    description: 'should work with only primary option',
+    ruleOptions: true,
+    linterOptions: {config: {plugins: ['./dist/test/plugins.js']}},
+    fix: true,
+    accept: [
+        {
+            code: 'a { color: pink; }',
+        },
+    ],
+    reject: [
+        {
+            code: 'a { color: pink; visibility: hidden; }',
+            fixed: 'a { color: pink; }',
+            message: visibilityRule.message,
+        },
+    ],
+});
+
+testRule({
+    ruleName: visibilityRule.ruleName,
+    description: 'should work with primary and secondary option',
+    ruleOptions: [true, 'ooga-booga'],
+    linterOptions: {config: {plugins: ['./dist/test/plugins.js']}},
+    fix: true,
+    accept: [
+        {
+            code: 'a { color: pink; }',
+        },
+    ],
+    reject: [
+        {
+            code: 'a { color: pink; visibility: hidden; }',
+            fixed: 'a { color: pink; ooga-booga: hidden; }',
+            message: visibilityRule.message,
+        },
+    ],
+});
+
+testRule({
+    ruleName: visibilityRule.ruleName,
+    description: 'should work with secondary option as an object',
+    ruleOptions: [true, {replacement: 'ooga-booga'}],
+    linterOptions: {config: {plugins: ['./dist/test/plugins.js']}},
+    fix: true,
+    accept: [
+        {
+            code: 'a { color: pink; }',
+        },
+    ],
+    reject: [
+        {
+            code: 'a { color: pink; visibility: hidden; }',
+            fixed: 'a { color: pink; ooga-booga: hidden; }',
+            message: visibilityRule.message,
         },
     ],
 });
