@@ -11,10 +11,11 @@ Largely influenced by [jest-preset-stylelint/getTestRule.js](https://github.com/
 This is from [this project's test file](https://github.com/electrovir/stylelint-jest-rule-tester/blob/master/src/test/rules/visibility/visibility.test.ts).
 
 ```typescript
-import {testRule} from '../../..';
+import {testRule} from 'stylelint-jest-rule-tester';
 import {visibilityRule} from './visibility.rule';
 
 testRule({
+    // replace this name with your rule's name
     ruleName: visibilityRule.ruleName,
     description: 'should work primary option in array',
     ruleOptions: [true],
