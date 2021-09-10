@@ -22,7 +22,7 @@ const rule: Plugin = (
             return;
         }
 
-        root.walkDecls(decl => {
+        root.walkDecls((decl) => {
             if (decl.prop === 'visibility') {
                 if (context.fix) {
                     if (secondaryOption) {

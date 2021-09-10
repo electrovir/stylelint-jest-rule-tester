@@ -1,5 +1,5 @@
-import {inspect} from 'util';
 import {lint, LinterOptions, LintResult} from 'stylelint';
+import {inspect} from 'util';
 
 /*
 This file is largely based on
@@ -61,6 +61,18 @@ export type WarningMessage = {
     column: number;
 };
 
+async function getSingleLintResult(options: Partial<LinterOptions>): Promise<LintResult> {
+    const {
+        results: [result],
+    } = await lint(options);
+
+    if (!result) {
+        throw new Error(`Didn't find single lint result for single lint input.`);
+    }
+
+    return result;
+}
+
 export function testRule<RuleOptionsType>(testRuleInput: TestRuleInput<RuleOptionsType>) {
     describe(testRuleInput.ruleName, () => {
         const ruleLinterOptions: Partial<LinterOptions> = {
@@ -77,15 +89,13 @@ export function testRule<RuleOptionsType>(testRuleInput: TestRuleInput<RuleOptio
             'accept',
             testRuleInput.accept,
             testRuleInput.ruleOptions,
-            testCase => async () => {
+            (testCase) => async () => {
                 const testCaseLinterOptions: Partial<LinterOptions> = {
                     ...ruleLinterOptions,
                     code: testCase.code,
                 };
 
-                const {
-                    results: [result],
-                } = await lint(testCaseLinterOptions);
+                const result = await getSingleLintResult(testCaseLinterOptions);
 
                 expect(result.warnings).toHaveLength(0);
                 if ((result as any).parseErrors.length) {
@@ -95,9 +105,11 @@ export function testRule<RuleOptionsType>(testRuleInput: TestRuleInput<RuleOptio
 
                 // fix shouldn't change code in an "accept" test
                 if (testRuleInput.fix) {
-                    const {
-                        results: [fixedResult],
-                    } = await lint({...testCaseLinterOptions, fix: true});
+                    const fixedResult = await getSingleLintResult({
+                        ...testCaseLinterOptions,
+                        fix: true,
+                    });
+
                     const fixedCode = getOutputCss(fixedResult);
 
                     expect(fixedCode).toBe(testCase.code);
@@ -110,15 +122,13 @@ export function testRule<RuleOptionsType>(testRuleInput: TestRuleInput<RuleOptio
             'reject',
             testRuleInput.reject,
             testRuleInput.ruleOptions,
-            testCase => async () => {
+            (testCase) => async () => {
                 const testCaseLinterOptions: Partial<LinterOptions> = {
                     ...ruleLinterOptions,
                     code: testCase.code,
                 };
 
-                const {
-                    results: [result],
-                } = await lint(testCaseLinterOptions);
+                const result = await getSingleLintResult(testCaseLinterOptions);
 
                 const actualWarnings = result.warnings;
 
@@ -133,6 +143,13 @@ export function testRule<RuleOptionsType>(testRuleInput: TestRuleInput<RuleOptio
                 ((testCase.warnings || [testCase]) as Partial<WarningMessage>[]).forEach(
                     (expectedMessage, index) => {
                         const actualWarning = actualWarnings[index];
+
+                        if (!actualWarning) {
+                            throw new Error(
+                                `Actual warning index not found: ${index} with message ${expectedMessage}`,
+                            );
+                        }
+
                         expect(expectedMessage.message).toBeTruthy();
                         expect(actualWarning.text).toBe(expectedMessage.message);
 
@@ -157,9 +174,7 @@ export function testRule<RuleOptionsType>(testRuleInput: TestRuleInput<RuleOptio
                     );
                 }
 
-                const {
-                    results: [fixResult],
-                } = await lint({...testCaseLinterOptions, fix: true});
+                const fixResult = await getSingleLintResult({...testCaseLinterOptions, fix: true});
 
                 const fixedCode = getOutputCss(fixResult);
 
@@ -176,9 +191,7 @@ export function testRule<RuleOptionsType>(testRuleInput: TestRuleInput<RuleOptio
                 }
 
                 // Checks whether only errors other than those fixed are reported
-                const {
-                    results: [lintFixedCodeResult],
-                } = await lint({
+                const lintFixedCodeResult = await getSingleLintResult({
                     ...testCaseLinterOptions,
                     code: fixedCode,
                 });
@@ -219,7 +232,7 @@ function setupTestCases<RuleOptions>(
 ): void {
     if (cases.length) {
         describe(testType, () => {
-            cases.forEach(testCase => {
+            cases.forEach((testCase) => {
                 const itTest = testCase.onlyRunThisTest
                     ? it.only
                     : testCase.skipThisTest

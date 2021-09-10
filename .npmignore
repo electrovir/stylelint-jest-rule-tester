@@ -2,7 +2,7 @@
 .vscode
 dist/test/
 src
-.prettierrc.json
+.prettierrc.js
 jest.config.json
 prettierignore
 tsconfig.json
