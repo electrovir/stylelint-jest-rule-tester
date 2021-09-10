@@ -26,9 +26,10 @@
     "author": "electrovir (github.com/electrovir)",
     "main": "dist/index.js",
     "scripts": {
+        "format": "virmator format",
         "prepublishOnly": "npm run test",
-        "test": "virmator compile && jest",
-        "format": "virmator format"
+        "test:full": "virmator spellcheck && virmator format check && npm test",
+        "test": "virmator compile && jest"
     },
     "devDependencies": {
         "@types/jest": "^27.0.1",

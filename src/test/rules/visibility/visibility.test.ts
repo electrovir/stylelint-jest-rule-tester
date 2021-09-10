@@ -63,7 +63,7 @@ testRule({
 testRule({
     ruleName: visibilityRule.ruleName,
     description: 'should work with primary and secondary option',
-    ruleOptions: [true, 'ooga-booga'],
+    ruleOptions: [true, 'stuff-hoop'],
     linterOptions: {config: {plugins: ['./dist/test/plugins.js']}},
     fix: true,
     accept: [
@@ -74,7 +74,7 @@ testRule({
     reject: [
         {
             code: 'a { color: pink; visibility: hidden; }',
-            fixed: 'a { color: pink; ooga-booga: hidden; }',
+            fixed: 'a { color: pink; stuff-hoop: hidden; }',
             message: visibilityRule.message,
         },
     ],
@@ -83,7 +83,7 @@ testRule({
 testRule({
     ruleName: visibilityRule.ruleName,
     description: 'should work with secondary option as an object',
-    ruleOptions: [true, {replacement: 'ooga-booga'}],
+    ruleOptions: [true, {replacement: 'stuff-hoop'}],
     linterOptions: {config: {plugins: ['./dist/test/plugins.js']}},
     fix: true,
     accept: [
@@ -94,7 +94,7 @@ testRule({
     reject: [
         {
             code: 'a { color: pink; visibility: hidden; }',
-            fixed: 'a { color: pink; ooga-booga: hidden; }',
+            fixed: 'a { color: pink; stuff-hoop: hidden; }',
             message: visibilityRule.message,
         },
     ],
