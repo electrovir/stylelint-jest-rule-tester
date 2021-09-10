@@ -2,6 +2,8 @@
 
 _This is not an official [stylelint](https://stylelint.io) package._
 
+[![tests](https://github.com/electrovir/stylelint-jest-rule-tester/actions/workflows/virmator-tests.yml/badge.svg?branch=master)](https://github.com/electrovir/stylelint-jest-rule-tester/actions/workflows/virmator-tests.yml)
+
 Simple function written in TypeScript to test custom stylelint plugin rules.
 
 Largely influenced by [jest-preset-stylelint/getTestRule.js](https://github.com/stylelint/jest-preset-stylelint/blob/769cac42e11f811aac6f59ee6570205910ea98fa/getTestRule.js).
