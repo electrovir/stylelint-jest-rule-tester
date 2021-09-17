@@ -1,4 +1,4 @@
-# Stylelint Rule Tester
+# Stylelint Jest Rule Tester
 
 _This is not an official [stylelint](https://stylelint.io) package._
 
