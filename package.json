@@ -1,6 +1,6 @@
 {
     "name": "stylelint-jest-rule-tester",
-    "version": "2.1.5",
+    "version": "2.1.6",
     "description": "Simple stylelint.io rule tester that uses Jest.",
     "keywords": [
         "stylelint",
@@ -39,9 +39,5 @@
         "jest": "^27.2.4",
         "stylelint": "^13.13.1",
         "virmator": "^1.2.0"
-    },
-    "peerDependencies": {
-        "jest": "^27.2.4",
-        "stylelint": "^13.13.1"
     }
 }
