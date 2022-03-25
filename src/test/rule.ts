@@ -16,7 +16,6 @@ export function createRuleMessage(ruleName: string, message: string): string {
 }
 
 export function createRule(inputRuleName: string, ruleCallback: Plugin, message: string): Rule {
-    const plugin = createPlugin(inputRuleName, ruleCallback);
-    plugin.message = message;
+    const plugin: Rule = {...createPlugin(inputRuleName, ruleCallback), message};
     return plugin;
 }

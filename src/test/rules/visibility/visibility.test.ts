@@ -63,7 +63,10 @@ testRule({
 testRule({
     ruleName: visibilityRule.ruleName,
     description: 'should work with primary and secondary option',
-    ruleOptions: [true, 'stuff-hoop'],
+    ruleOptions: [
+        true,
+        'stuff-hoop',
+    ],
     linterOptions: {config: {plugins: ['./dist/test/plugins.js']}},
     fix: true,
     accept: [
@@ -83,7 +86,12 @@ testRule({
 testRule({
     ruleName: visibilityRule.ruleName,
     description: 'should work with secondary option as an object',
-    ruleOptions: [true, {replacement: 'stuff-hoop'}],
+    ruleOptions: [
+        true,
+        {
+            replacement: 'stuff-hoop',
+        },
+    ],
     linterOptions: {config: {plugins: ['./dist/test/plugins.js']}},
     fix: true,
     accept: [

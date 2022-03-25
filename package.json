@@ -1,6 +1,6 @@
 {
     "name": "stylelint-jest-rule-tester",
-    "version": "2.1.6",
+    "version": "2.1.7",
     "description": "Simple stylelint.io rule tester that uses Jest.",
     "keywords": [
         "stylelint",
@@ -23,21 +23,22 @@
         "url": "git+https://github.com/electrovir/stylelint-jest-rule-tester.git"
     },
     "license": "MIT",
-    "author": "electrovir (github.com/electrovir)",
+    "author": {
+        "name": "electrovir",
+        "url": "https://github.com/electrovir"
+    },
     "main": "dist/index.js",
     "scripts": {
+        "format": "virmator format",
         "prepublishOnly": "npm run test",
         "spellcheck": "virmator spellcheck --extendable-config",
-        "test": "virmator compile && jest",
-        "test:full": "npm run spellcheck && npm run format check && npm test",
-        "format": "virmator format"
+        "test": "virmator compile && virmator test",
+        "test:full": "npm run spellcheck && npm run format check && npm test"
     },
     "devDependencies": {
-        "@types/jest": "^27.0.2",
-        "@types/node": "^16.10.3",
-        "@types/stylelint": "^13.13.2",
-        "jest": "^27.2.4",
-        "stylelint": "^13.13.1",
-        "virmator": "^1.2.0"
+        "@types/node": "17.0.23",
+        "@types/stylelint": "13.13.2",
+        "stylelint": "14.6.0",
+        "virmator": "2.0.3"
     }
 }
